@@ -19,7 +19,12 @@ Visuals::Visuals(Int2 window_size) {													// Setup window
 
 void Visuals::drawLine(sf::RenderTarget* target, LineSegment segment) {
 	sf::RectangleShape line(sf::Vector2f(segment.len(), 3));
-	line.setFillColor(sf::Color(0, 0, 0));
+	if (segment.visibility == SEEN)
+		line.setFillColor(sf::Color(0, 255, 0));
+	else if (segment.visibility == UNSEEN)
+		line.setFillColor(sf::Color(255, 0, 0));
+	else
+		line.setFillColor(sf::Color(0, 0, 100));
 	line.rotate(segment.angle());
 	line.setPosition(segment.p1.x , segment.p1.y);
 	window->draw(line);
@@ -27,7 +32,7 @@ void Visuals::drawLine(sf::RenderTarget* target, LineSegment segment) {
 
 
 
-void Visuals::draw(LineSegment* segments, int num_segments, Int2 center)
+void Visuals::draw(LineSegment* segments,  int num_segments, Int2 center, LineSegment* swpline)
 {
 	//window->enableKeyRepeat(false);
 	//window->setKeyRepeatEnabled(false);
@@ -55,6 +60,7 @@ void Visuals::draw(LineSegment* segments, int num_segments, Int2 center)
 		for (int i = 0; i < num_segments; i++) {
 			drawLine(window, segments[i]);
 		}
+		drawLine(window, *swpline);
 
 
 

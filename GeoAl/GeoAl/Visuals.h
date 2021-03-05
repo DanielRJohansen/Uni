@@ -8,7 +8,7 @@ class Visuals
 public:
 	Visuals(Int2 window_size);
 
-	void draw(LineSegment* segments, int num_segments, Int2 center);
+	void draw(LineSegment* segments, int num_segments, Int2 center, LineSegment* swpline);
 
 
 private:

@@ -21,12 +21,18 @@
     <ClCompile Include="Visuals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VisibleLines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visuals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Containers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VisibleLines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
