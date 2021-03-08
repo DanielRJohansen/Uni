@@ -3,17 +3,20 @@
 #include <iostream>
 
 
-struct Int2 {
-	Int2() {};
-	Int2(int x, int y) : x(x), y(y) {}
-	int x, y;
+struct Double2 {
+	Double2() {};
+	Double2(double x, double y) : x(x), y(y) {}
+	double x, y;
 
 
-	double dist(Int2 p) {
+	double dist(Double2 p) {
 		return sqrt((x - p.x) * (x - p.x) + (y - p.y) * (y - p.y));
 	}
-	double angle(Int2 p) {// Rad
+	double angle(Double2 p) {// Rad
 		return atan2(p.y - y, p.x - x);
+	}
+	bool equal(Double2 p) {
+		return (x == p.x && y == p.y);
 	}
 };
 
@@ -32,41 +35,51 @@ struct AngularPoint {
 	TYPE type;
 };
 
+
+
+
+
+
 enum VISIBILITY {SEEN, UNSEEN, SWEEP};
-struct LineSegment {
+struct LineSegment {									// ALL LINES ARE TREATED AS UNBOUNDED
 	LineSegment() {}
-	LineSegment(Int2 p1, Int2 p2) : p1(p1), p2(p2) {}
-	Int2 p1, p2;
+	LineSegment(Double2 p1, Double2 p2) : p1(p1), p2(p2) {}
+	Double2 p1, p2;
 	double key;		// For sorting, represents angle between centerpoint and the lines start-point
 	bool visible = false;
 	VISIBILITY visibility = UNSEEN;
 
+	bool current = false;
+
+
 	int len() {
 		return p1.dist(p2);
 	}
-	int angle() {	// Degrees
+	double angle() {	// Degrees
 		double r = atan2(p2.y - p1.y, p2.x - p1.x);
 		return (r * 180) / 3.14;
 	}
-	Int2 intersect(LineSegment line) {	// No testing whether the lines to actually intersect. It is assumed they do.
-		double determinant = (p1.x - p2.x)*(line.p1.y, line.p2.y) - (p1.y - p2.y)*(line.p1.x - line.p2.x);
+	Double2 intersect(LineSegment line) {	// No testing whether the lines to actually intersect. It is assumed they do.
+		//printf("Intersecting %d %d to %d %d with %d %d to %d %d\n", p1.x, p1.y, p2.x, p2.y, line.p1.x, line.p2.y, line.p2.x, line.p2.y);
+		double determinant = (p1.x - p2.x)*(line.p1.y - line.p2.y) - (p1.y - p2.y)*(line.p1.x - line.p2.x);
 		if (determinant == 0) {
 			std::printf("Illegal determinant in intersect");
 			exit(-1);
 		}
-		double x = (	  (p1.x * p2.y - p1.y * p2.x) * (line.p1.x - line.p2.x) - (p1.x - p2.x) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)	) / determinant;
-		double y = ((p1.x * p2.y - p1.y * p2.x) * (line.p1.y - line.p2.y) - (p1.y - p2.y) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)) / determinant;
-		return Int2((int)x, (int)y);
+		double x = (	(p1.x * p2.y - p1.y * p2.x) * (line.p1.x - line.p2.x) - (p1.x - p2.x) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)	   ) / determinant;
+		double y = (    (p1.x * p2.y - p1.y * p2.x) * (line.p1.y - line.p2.y) - (p1.y - p2.y) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)    ) / determinant;
+		//printf("Intersect: %d  %d\n\n", (int)x, (int)y);
+		return Double2(x, y);
 	}
-	void sortPointsByAngle(Int2 p) {
+	void sortPointsByAngle(Double2 p) {
 		if (p.angle(p2) < p.angle(p1)) {
-			Int2 temp = p1;
+			Double2 temp = p1;
 			p1 = p2;
 			p2 = temp;
 		}
 		key = p.angle(p1);
 	}
-	AngularPoint* getPoints(Int2 p) {
+	AngularPoint* getPoints(Double2 p) {
 		sortPointsByAngle(p);
 		AngularPoint* points = new AngularPoint[2];
 		points[0] = AngularPoint(p.angle(p1), this, START);
@@ -119,20 +132,21 @@ struct EventQueue {			// The root contains no values, its just a simple implemen
 
 		Node* next = NULL;
 
-
+		// TODO: MAKE CASE FOR EQUAL ANGLES TO BE PUT BEHIND.
 		void addLine(LineSegment* insertion, LineSegment* sweepline) {		// For the priority queue
 			if (next == NULL) {
 				next = new Node(insertion);
 			}
 			else if (next->line == insertion) {		// Case where line already exist, temporary
+				printf("Case!");
 				return;
 			}
 			else {
-				Int2 sweep_intersect_next = sweepline->intersect(*next->line);
+				Double2 sweep_intersect_next = sweepline->intersect(*next->line);
 				double dist_to_next_line = sweepline->p1.dist(sweep_intersect_next);
 				double dist_to_insertion = sweepline->p1.dist(insertion->p1);
-				printf(" ins %f, next %f\n", dist_to_insertion, dist_to_next_line);
-				if (dist_to_insertion < dist_to_next_line) {					// CAUTION: using <= here to deal with special case of many lines starting at same point
+				printf("Ins: %f    Next: %f\n",dist_to_insertion, dist_to_next_line);
+				if (dist_to_next_line - dist_to_insertion > 0.01 && ! (insertion->p1.equal(next->line->p1)) ){					// CAUTION: using <= here to deal with special case of many lines starting at same point
 					Node* temp = next;
 					next = new Node(insertion);
 					next->next = temp;
@@ -155,7 +169,6 @@ struct EventQueue {			// The root contains no values, its just a simple implemen
 		}
 		void fetch(LineSegment* lines, int index) {
 			if (next != NULL) {
-				printf("index_ %d\n", index);
 				next->line->visible = true;			// Not critical for algo, but easy implementation for graphic visualization
 				next->line->visibility = SEEN;
 				lines[index] = *next->line;

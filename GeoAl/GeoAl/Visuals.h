@@ -6,12 +6,13 @@
 class Visuals
 {
 public:
-	Visuals(Int2 window_size);
+	Visuals(Double2 window_size);
 
-	void draw(LineSegment* segments, int num_segments, Int2 center, LineSegment* swpline);
+	void draw(LineSegment* segments, int num_segments, Double2 center, LineSegment* swpline);
 
 
 private:
+	Double2 window_size;
 	sf::Image* image;
 	sf::Texture texture;
 	sf::Sprite sprite;
