@@ -3,105 +3,134 @@
 #include "Visuals.h"
 #include "VisibleLines.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+#include <vector>
 
 struct Test {
 	int val;
 	Test* next = NULL;
 };
 
+LineSegment* parseInput(std::string path, int* num_lines, Double2* centerpoint) {
+	std::fstream newfile;
+	std::vector<LineSegment> line_vector;
+
+	double* buffer = new double[4];
+
+	newfile.open(path, std::ios::in); //open a file to perform read operation using file object
+	if (newfile.is_open()) {   //checking whether the file is open
+		std::string line;
+		int cnt = 0;
+		std::string temp;
+		double val;
+		while (getline(newfile, line)) {  //read data from file object and put it into string.
+			std::stringstream ss;
+			ss << line;
+			for (int i = 0; i < 4; i++) {
+				ss >> temp;
+				std::stringstream(temp) >> val;
+				buffer[i] = val;
+			}
+
+			if (cnt++ == 0) {
+				centerpoint->x = buffer[0];
+				centerpoint->y = buffer[1];
+			}
+			else {
+				LineSegment l(Double2(buffer[0], buffer[1]), Double2(buffer[2], buffer[3]));
+				line_vector.push_back(l);
+			}
+
+		}
+		newfile.close();   //close the file object.
+	}
+
+
+	*num_lines = line_vector.size();
+	LineSegment* line_arr = new LineSegment[*num_lines];
+	for (int i = 0; i < *num_lines; i++) {
+		line_arr[i] = line_vector[i];
+	}
+
+	delete buffer;
+	return line_arr;
+}
+
+void saveOutput(LineSegment* visible_lines, int num_visibles) {
+	std::fstream newfile;
+	newfile.open("../output.txt", std::ios::out);  
+	if (newfile.is_open())     
+	{	
+		for (int i = 0; i < num_visibles; i++) {
+			newfile << visible_lines[i].p1.x << " ";
+			newfile << visible_lines[i].p1.y << " ";
+			newfile << visible_lines[i].p2.x << " ";
+			newfile << visible_lines[i].p2.y << " ";
+			newfile << "\n";
+		}
+		newfile.close(); //close the file object
+	}
+}
+
+
 int main() {
-	/*
-	int* a = new int[2];
-	a[0] = 1;
-	a[1] = 2;
-	
-	printf("%d   %d\n", a[0], a[1]);
-
-
-	int** b = new int* [2];
-	b[0] = &a[0];
-	b[1] = &a[1];
-
-
-	int* c = new int[2];
-	c[0] = *b[0];
-	c[1] = *b[1];
-
-	*b[0] = c[1];
-	*b[1] = c[0];
-	printf("%d   %d", a[0], a[1]);
-	
-	*/
-
-	
-	//printf("%d    %d    %d", b.val, b.next->val, b.next->next->val);
-
-	
+	std::string path = "../input.txt";
+	Double2 windowsize(1920, 1080);
 
 
 
-	Visuals vis(Double2(1920, 1080));
-
-	const int ns = 15;
-	LineSegment* segments = new LineSegment[ns];
-
-	
-	segments[0] = LineSegment(Double2(1600, 200), Double2(1700, 800));
-	segments[14] = LineSegment(Double2(1500, 300), Double2(1600, 700));
-
-	segments[1] = LineSegment(Double2(30, 200), Double2(400, 500));
-	segments[2] = LineSegment(Double2(900, 1000), Double2(200, 550));
-	segments[3] = LineSegment(Double2(1700, 900), Double2(1500, 950));
-
-	// Many start overlap special case
-	segments[4] = LineSegment(Double2(1800, 900), Double2(700, 700));	
-	segments[5] = LineSegment(Double2(1800, 900), Double2(500, 700));
-	segments[6] = LineSegment(Double2(1800, 900), Double2(600, 700));
-
-	// messy start stop overlap special case
-	segments[1] = LineSegment(Double2(300, 200), Double2(1100, 200));
-	segments[0] = LineSegment(Double2(300, 200), Double2(500, 250));
-
-	segments[8] = LineSegment(Double2(1100, 200), Double2(500, 250));
-	segments[12] = LineSegment(Double2(500, 250), Double2(1000, 250));
-	segments[13] = LineSegment(Double2(300, 150), Double2(1000, 150));
-
-
-	segments[9] = LineSegment(Double2(3, 15), Double2(10, 800));
-	segments[10] = LineSegment(Double2(10, 220), Double2(30, 400));
-	
-
-
-	int num_segments = 2;
-	Double2 p = Double2(1920 / 2, 1080 / 2);
+	int num_lines;
+	Double2 centerpoint;
+	LineSegment* inputlines = parseInput(path, &num_lines, &centerpoint);
 
 
 
 
-
-
-
-
-
-
-
-
+	Visuals vis(windowsize);
 	VisibleLines VL(&vis);
 	LineSegment* swpline = new LineSegment;
-	swpline->visibility = SWEEP;
+
+
+	// Generate output
 	int num_visible_lines = 0;
-	LineSegment* visible_lines = VL.run(p, segments, num_segments, &num_visible_lines, swpline);
-
-
-
-//	vis.draw(segments, num_segments, p, swpline);
-
-
-
-
-
-
-
+	LineSegment* visible_lines = VL.run(centerpoint, inputlines, num_lines, &num_visible_lines, swpline);
+	saveOutput(visible_lines, num_visible_lines);
 
 	return 1;
-}
+}	
+
+
+/*
+	const int ns = 15;
+	LineSegment* segments = new LineSegment[ns];
+	segments[0] = LineSegment(Double2(1600, 200), Double2(1700, 800));
+	segments[1] = LineSegment(Double2(1500, 300), Double2(1600, 700));
+
+	segments[2] = LineSegment(Double2(30, 200), Double2(400, 500));
+	segments[3] = LineSegment(Double2(900, 1000), Double2(200, 550));
+	segments[4] = LineSegment(Double2(1700, 900), Double2(1500, 950));
+
+	// Many start overlap special case
+	segments[5] = LineSegment(Double2(1800, 900), Double2(700, 700));
+	segments[6] = LineSegment(Double2(1800, 900), Double2(500, 700));
+	segments[7] = LineSegment(Double2(1800, 900), Double2(600, 700));
+
+	// Messy start stop overlap special case
+	segments[8] = LineSegment(Double2(300, 200), Double2(1100, 200));
+	segments[9] = LineSegment(Double2(300, 200), Double2(500, 250));
+	segments[10] = LineSegment(Double2(1100, 200), Double2(500, 250));
+	segments[11] = LineSegment(Double2(500, 250), Double2(1000, 250));
+	segments[12] = LineSegment(Double2(300, 150), Double2(1000, 150));
+
+
+	// First point hidden by not yet found line
+	segments[13] = LineSegment(Double2(600, 600), Double2(10, 10));
+
+
+	Double2 p = Double2(1920 / 2, 1080 / 2);
+
+	*/

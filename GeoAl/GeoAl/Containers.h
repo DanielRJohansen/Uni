@@ -45,7 +45,6 @@ struct LineSegment {									// ALL LINES ARE TREATED AS UNBOUNDED
 	LineSegment() {}
 	LineSegment(Double2 p1, Double2 p2) : p1(p1), p2(p2) {}
 	Double2 p1, p2;
-	double key;		// For sorting, represents angle between centerpoint and the lines start-point
 	bool visible = false;
 	VISIBILITY visibility = UNSEEN;
 
@@ -60,26 +59,39 @@ struct LineSegment {									// ALL LINES ARE TREATED AS UNBOUNDED
 		return (r * 180) / 3.14;
 	}
 	Double2 intersect(LineSegment line) {	// No testing whether the lines to actually intersect. It is assumed they do.
-		//printf("Intersecting %d %d to %d %d with %d %d to %d %d\n", p1.x, p1.y, p2.x, p2.y, line.p1.x, line.p2.y, line.p2.x, line.p2.y);
-		double determinant = (p1.x - p2.x)*(line.p1.y - line.p2.y) - (p1.y - p2.y)*(line.p1.x - line.p2.x);
-		if (determinant == 0) {
-			std::printf("Illegal determinant in intersect");
+		double denominator = (p1.x - p2.x)*(line.p1.y - line.p2.y) - (p1.y - p2.y)*(line.p1.x - line.p2.x);
+		if (denominator == 0) {
+			std::printf("Division by 0 in intersect");
 			exit(-1);
 		}
-		double x = (	(p1.x * p2.y - p1.y * p2.x) * (line.p1.x - line.p2.x) - (p1.x - p2.x) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)	   ) / determinant;
-		double y = (    (p1.x * p2.y - p1.y * p2.x) * (line.p1.y - line.p2.y) - (p1.y - p2.y) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)    ) / determinant;
-		//printf("Intersect: %d  %d\n\n", (int)x, (int)y);
+		double x = (	(p1.x * p2.y - p1.y * p2.x) * (line.p1.x - line.p2.x) - (p1.x - p2.x) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)	   ) / denominator;
+		double y = (    (p1.x * p2.y - p1.y * p2.x) * (line.p1.y - line.p2.y) - (p1.y - p2.y) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)    ) / denominator;
 		return Double2(x, y);
+	}
+	void flip() {
+		Double2 temp = p1;
+		p1 = p2;
+		p2 = temp;
 	}
 	void sortPointsByAngle(Double2 p) {
 		if (p.angle(p2) < p.angle(p1)) {
-			Double2 temp = p1;
-			p1 = p2;
-			p2 = temp;
+			this->flip();
 		}
-		key = p.angle(p1);
+		handleStartlineOverlapSpecialCase(p);
 	}
-	AngularPoint* getPoints(Double2 p) {
+
+	void handleStartlineOverlapSpecialCase(Double2 p) {
+		Double2 leftof = Double2(p.x - 1, p.y);
+		LineSegment flatline = LineSegment(leftof, p);
+		if (p1.y < p.y && p2.y > p.y) {
+			Double2 intersect_ = this->intersect(flatline);
+			if (intersect_.x < p.x) {
+				this->flip();
+			}
+		}
+	}
+
+	AngularPoint* getAngularPoints(Double2 p) {
 		sortPointsByAngle(p);
 		AngularPoint* points = new AngularPoint[2];
 		points[0] = AngularPoint(p.angle(p1), this, START);
@@ -118,7 +130,6 @@ struct EventQueue {			// The root contains no values, its just a simple implemen
 		root->deleteLine(deletion);
 	}
 	LineSegment* fetch() {
-		printf("Fetching size: %d\n", size);
 		LineSegment* all_lines = new LineSegment[size];
 		root->fetch(all_lines, 0);
 		return all_lines;
@@ -132,21 +143,18 @@ struct EventQueue {			// The root contains no values, its just a simple implemen
 
 		Node* next = NULL;
 
-		// TODO: MAKE CASE FOR EQUAL ANGLES TO BE PUT BEHIND.
 		void addLine(LineSegment* insertion, LineSegment* sweepline) {		// For the priority queue
 			if (next == NULL) {
 				next = new Node(insertion);
 			}
 			else if (next->line == insertion) {		// Case where line already exist, temporary
-				printf("Case!");
 				return;
 			}
 			else {
 				Double2 sweep_intersect_next = sweepline->intersect(*next->line);
 				double dist_to_next_line = sweepline->p1.dist(sweep_intersect_next);
 				double dist_to_insertion = sweepline->p1.dist(insertion->p1);
-				printf("Ins: %f    Next: %f\n",dist_to_insertion, dist_to_next_line);
-				if (dist_to_next_line - dist_to_insertion > 0.01 && ! (insertion->p1.equal(next->line->p1)) ){					// CAUTION: using <= here to deal with special case of many lines starting at same point
+				if (dist_to_insertion < dist_to_next_line  && ! (insertion->p1.equal(next->line->p1)) ){	// Not sure if 2nd comparison is necessary
 					Node* temp = next;
 					next = new Node(insertion);
 					next->next = temp;
@@ -156,8 +164,10 @@ struct EventQueue {			// The root contains no values, its just a simple implemen
 				}
 			}
 		}
+
 		void deleteLine(LineSegment* deletion) {
-			if (next->line == deletion) {
+			if (next == NULL) {}
+			else if (next->line == deletion) {
 				Node* temp = next->next;
 				delete next;
 				next = temp;

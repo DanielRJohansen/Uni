@@ -1,7 +1,6 @@
-﻿  VisibleLines.cpp
-C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\Containers.h(56,17): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+﻿  Source.cpp
+C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\Containers.h(55,17): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
 C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\VisibleLines.h(25,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\VisibleLines.h(26,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\VisibleLines.cpp(5,9): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\VisibleLines.cpp(6,9): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\GeoAl\GeoAl\Source.cpp(53,33): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   GeoAl.vcxproj -> C:\Users\DRDJ\git_repo\Uni\GeoAl\x64\Debug\GeoAl.exe

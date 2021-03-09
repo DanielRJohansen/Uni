@@ -40,20 +40,8 @@ void Visuals::drawLine(sf::RenderTarget* target, LineSegment segment) {
 
 void Visuals::draw(LineSegment* segments,  int num_segments, Double2 center, LineSegment* swpline)
 {
-	//window->enableKeyRepeat(false);
-	//window->setKeyRepeatEnabled(false);
-
+	sf::Event event;
 	while (true) {																		// I run in this loop to make the window dragable.
-		sf::Event event;
-		window->pollEvent(event);
-		if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			printf("Click\n");
-		}
-
-
-
-
-
 		window->draw(sprite);
 
 
@@ -72,7 +60,7 @@ void Visuals::draw(LineSegment* segments,  int num_segments, Double2 center, Lin
 
 		window->display();
 
-
+		window->pollEvent(event);
 		if (event.type == sf::Event::KeyPressed) {
 			if (event.key.code == sf::Keyboard::Right) {
 				break;
