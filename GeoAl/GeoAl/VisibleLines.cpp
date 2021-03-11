@@ -217,10 +217,21 @@ void VisibleLines::handleIdenticalStartpoints(AngularPoint* points, int n_points
 
 
 
+
+
+
+
+
+
+
+
+
 LineSegment* VisibleLines::run(Double2 point, LineSegment* linesegments, int num_lines, int* num_visible_lines, LineSegment* swpline) {
     int n_points = num_lines * 2;
     centerpoint = point;
 
+
+    // First get all points from all lines, sorted by angle.
     AngularPoint* points = new AngularPoint[n_points];
     for (int i = 0; i < num_lines; i++) {
         AngularPoint* lines_points = linesegments[i].getAngularPoints(point);          // First special case handled here
@@ -274,7 +285,6 @@ LineSegment* VisibleLines::run(Double2 point, LineSegment* linesegments, int num
     delete points;
 
     *num_visible_lines = visibles.size;
-    printf("%d visible lines found\n", visibles.size);
     LineSegment* visible_lines = visibles.fetch();
 
     return visible_lines;

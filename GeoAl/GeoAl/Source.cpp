@@ -62,7 +62,7 @@ LineSegment* parseInput(std::string path, int* num_lines, Double2* centerpoint) 
 
 void saveOutput(LineSegment* visible_lines, int num_visibles) {
 	std::fstream newfile;
-	newfile.open("../output.txt", std::ios::out);  
+	newfile.open("./output.txt", std::ios::out);  
 	if (newfile.is_open())     
 	{	
 		for (int i = 0; i < num_visibles; i++) {
@@ -78,7 +78,7 @@ void saveOutput(LineSegment* visible_lines, int num_visibles) {
 
 
 int main() {
-	std::string path = "../input.txt";
+	std::string path = "./input.txt";
 	Double2 windowsize(1920, 1080);
 
 

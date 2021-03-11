@@ -1,5 +1,4 @@
 #pragma once
-#include "math.h"
 #include <iostream>
 
 
@@ -61,7 +60,7 @@ struct LineSegment {									// ALL LINES ARE TREATED AS UNBOUNDED
 	Double2 intersect(LineSegment line) {	// No testing whether the lines to actually intersect. It is assumed they do.
 		double denominator = (p1.x - p2.x)*(line.p1.y - line.p2.y) - (p1.y - p2.y)*(line.p1.x - line.p2.x);
 		if (denominator == 0) {
-			std::printf("Division by 0 in intersect");
+			std::cout << "Division by 0 in intersect";
 			exit(-1);
 		}
 		double x = (	(p1.x * p2.y - p1.y * p2.x) * (line.p1.x - line.p2.x) - (p1.x - p2.x) * (line.p1.x * line.p2.y - line.p1.y * line.p2.x)	   ) / denominator;
