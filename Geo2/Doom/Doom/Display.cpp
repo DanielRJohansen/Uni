@@ -113,14 +113,19 @@ Vec3d intersectPoint(Vec3d rayVector, Vec3d rayPoint, Vec3d planeNormal, Vec3d p
 	return rayPoint - rayVector * prod3;
 }
 
-
-void Display::addSegment(Wall* wallsegment) {
+Double2 Display::projectOnFocalPlane(Vec3d point) {
 	Vec3d wall_point, intersect, projection;
-	double projection_scaling = center.x;
+	//wall_point = Vec3d(point.x, point.y, 0);
+	intersect = intersectPoint(player->pos - point, point, player->focal_normal, player->focal_origo);
+	projection = (intersect - player->focal_origo).rotate(3.14 - player->angle);
+	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
+	return Double2(center.x + projection.y * center.x, center.y + projection.z * center.x);
+}
 
-	// Handle some special cases
+void Display::handleWallBehindPlayer(Vec3d* wall1, Vec3d* wall2, Wall* wallsegment) {
 	Vec3d w1(wallsegment->p1.x, wallsegment->p1.y, 0);
 	Vec3d w2(wallsegment->p2.x, wallsegment->p2.y, 0);
+
 	bool behind1 = (player->pos - w1).dot(player->focal_normal) > 0;// && (player->pos - w2).dot(player->focal_normal);
 	bool behind2 = (player->pos - w2).dot(player->focal_normal) > 0;
 
@@ -136,32 +141,43 @@ void Display::addSegment(Wall* wallsegment) {
 		w2.x = wall_focalp_intersect.x;
 		w2.y = wall_focalp_intersect.y;
 	}
+	*wall1 = w1;
+	*wall2 = w2;
+}
+
+
+void Display::handleFlipwall(Double2* bottomright, Double2* topright, Double2* bottomleft, Double2* topleft) {
+	if (bottomright->x < bottomleft->x) {
+		Double2 tmpbottom = *bottomright;
+		Double2 tmptop = *topright;
+		*bottomright = *bottomleft;
+		*topright = *topleft;
+		*bottomleft = tmpbottom;
+		*topleft = tmptop;
+	}
+}
 
 
 
-	wall_point = Vec3d(w1.x, w1.y, 0);
-	intersect = intersectPoint(player->pos - wall_point, wall_point, player->focal_normal, player->focal_origo);
-	projection = (intersect - player->focal_origo).rotate(3.14-player->angle);
-	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
-	Double2 bottomleft(center.x + projection.y * projection_scaling, center.y + projection.z * projection_scaling);
 
-	wall_point = Vec3d(w1.x, w1.y, 100);
-	intersect = intersectPoint(player->pos - wall_point, wall_point, player->focal_normal, player->focal_origo);
-	projection = (intersect - player->focal_origo).rotate(3.14 - player->angle);
-	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
-	Double2 topleft(center.x + projection.y * projection_scaling, center.y + projection.z * projection_scaling);
 
-	wall_point = Vec3d(w2.x, w2.y, 100);
-	intersect = intersectPoint(player->pos - wall_point, wall_point, player->focal_normal, player->focal_origo);
-	projection = (intersect - player->focal_origo).rotate(3.14 - player->angle);
-	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
-	Double2 topright(center.x + projection.y * projection_scaling, center.y + projection.z * projection_scaling);
+void Display::addSegment(Wall* wallsegment) {
+	Vec3d wall_point, intersect, projection;
+	double projection_scaling = center.x;
 
-	wall_point = Vec3d(w2.x, w2.y, 0);
-	intersect = intersectPoint(player->pos - wall_point, wall_point, player->focal_normal, player->focal_origo);
-	projection = (intersect - player->focal_origo).rotate(3.14 - player->angle);
-	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
-	Double2 bottomright(center.x + projection.y * projection_scaling, center.y + projection.z * projection_scaling);
+	// Handle some special cases
+	Vec3d w1, w2;
+	handleWallBehindPlayer(&w1, &w2, wallsegment);
+
+
+
+
+	Double2 bottomleft = projectOnFocalPlane(Vec3d(w1.x, w1.y, 0));
+	Double2 topleft = projectOnFocalPlane(Vec3d(w1.x, w1.y, 100));
+	Double2 topright = projectOnFocalPlane(Vec3d(w2.x, w2.y, 100));
+	Double2 bottomright = projectOnFocalPlane(Vec3d(w2.x, w2.y, 0));
+
+
 
 	if (bottomleft.x == bottomright.x) {
 		printf("VERY BAD\n");
@@ -172,35 +188,20 @@ void Display::addSegment(Wall* wallsegment) {
 
 
 	//---------------------------------- Constrain wall vectors to the frame, and sort from left to right---------------------------------//
-	if (bottomright.x < bottomleft.x) {
-		//printf("SWAPPING\n");
-		Double2 tmpbottom = bottomright;
-		Double2 tmptop = topright;
-		bottomright = bottomleft;
-		topright = topleft;
-		bottomleft = tmpbottom;
-		topleft = tmptop;
-	}
+	handleFlipwall(&bottomright, &topright, &bottomleft, &topleft);
+
 	Double2 bottom_unit = (bottomright - bottomleft);
 	Double2 top_unit = (topright - topleft);
 	bottom_unit = bottom_unit * (1 / bottom_unit.x);
 	top_unit = top_unit * (1 / top_unit.x);
-	/*printf("Bottom left: %f   %f\n", bottomleft.x, bottomleft.y);
-	printf("Top unit vector: %f     %f    \n", top_unit.x, top_unit.y);
-	printf("Bottom unit vector: %f     %f    \n", bottom_unit.x, bottom_unit.y);*/
+
 
 	if (bottomleft.x < 0) {
-		//printf("Too far to the left\n");
 		double dif = 0 - bottomleft.x;
-		//printf("%f  %f          %f   %f\n", bottomleft.x, bottomleft.y, topleft.x, topleft.y);
 		bottomleft = bottomleft + bottom_unit * dif;
 		topleft = topleft + top_unit * dif;
-		//printf("%f  %f          %f   %f\n", bottomleft.x, bottomleft.y, topleft.x, topleft.y);
-		//bottomleft.x = 0;
-		//topleft.x = 0;
 	}
 	if (bottomright.x > window_size.x) {
-		//printf("Too far to the right\n");
 		double dif = bottomright.x - window_size.x;
 		bottomright = bottomright - bottom_unit * dif;
 		topright = topright - top_unit * dif;
@@ -210,10 +211,7 @@ void Display::addSegment(Wall* wallsegment) {
 
 
 	Double2 request_scanline(bottomleft.x, bottomright.x);
-
-
 	int n_segments = 0;
-	//printf("Request - from:%f    to: %f\n", request_scanline.x, request_scanline.y);
 	Double2* segmentlist = scanline.request(request_scanline, &n_segments);
 	for (int i = 0; i < n_segments; i++) {
 		sf::VertexArray segment(sf::Quads, 4);
@@ -226,9 +224,6 @@ void Display::addSegment(Wall* wallsegment) {
 		Double2 tl = topleft + top_unit * relative_start;
 		Double2 br = bottomleft + bottom_unit * relative_end;
 		Double2 tr = topleft + top_unit * relative_end;
-		
-		//printf("bl: %f    %f\n", bl.x, bl.y);
-		//printf("br: %f    %f\n", br.x, br.y);
 
 
 		segment[0].position = sf::Vector2f(bl.x, window_size.y - bl.y);
@@ -242,9 +237,6 @@ void Display::addSegment(Wall* wallsegment) {
 		visibleSegments[n_visible++] = segment;
 
 	}
-
-	
-
 }
 
 void Display::renderFront() {

@@ -110,44 +110,70 @@ C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(89,51): warning C4244: 'ar
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(234,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(229,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(234,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(229,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(235,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(230,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(235,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(230,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(236,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(231,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(236,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(231,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(237,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(232,58): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(237,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Display.cpp(232,40): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
+  Environment.cpp
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Types.h(134,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Environment.cpp(68,90): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Environment.cpp(68,63): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Environment.cpp(91,99): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Environment.cpp(91,74): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+  main.cpp
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Types.h(134,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\main.cpp(45,31): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
   Doom.vcxproj -> C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\x64\Debug\Doom.exe

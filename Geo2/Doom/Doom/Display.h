@@ -39,6 +39,10 @@ private:
 
 	void renderTopView();
 	void prepFront();
+	Double2 projectOnFocalPlane(Vec3d segment);
+	void handleWallBehindPlayer(Vec3d* w1, Vec3d* w2, Wall* wallsegment);
+	void handleFlipwall(Double2* br, Double2* tr, Double2* bl, Double2* tl);
+	//void constrainProjectionToScreen()
 	void addSegment(Wall* segment);
 
 
