@@ -13,6 +13,7 @@ public:
 	Environment(Wall* walls, int n_walls): n_walls(n_walls) {
 		this->walls = walls;
 		display = Display(Double2(1920, 1080), walls, n_walls, &player);
+		bsp = BSP(walls, n_walls);
 	}
 
 	void run();
@@ -25,7 +26,7 @@ private:
 	Wall* walls;
 	int n_walls;
 
-	double dt = 0.1;
+	double dt = 0.3;
 
 	bool pause = 0;
 

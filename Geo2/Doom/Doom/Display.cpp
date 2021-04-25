@@ -179,7 +179,7 @@ void Display::addSegment(Wall* wallsegment) {
 
 
 
-	if (bottomleft.x == bottomright.x) {
+	if (bottomleft.x == bottomright.x) {	// Case when wall projected becomes a single line.
 		printf("VERY BAD\n");
 		return;
 	}
@@ -194,7 +194,6 @@ void Display::addSegment(Wall* wallsegment) {
 	Double2 top_unit = (topright - topleft);
 	bottom_unit = bottom_unit * (1 / bottom_unit.x);
 	top_unit = top_unit * (1 / top_unit.x);
-
 
 	if (bottomleft.x < 0) {
 		double dif = 0 - bottomleft.x;

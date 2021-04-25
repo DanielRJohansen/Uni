@@ -31,13 +31,20 @@ struct Double2 {
 	double dot(Double2 vecb) {
 		return this->len() * cos(vecb.angle(*this));
 	}
-
+	Double2 rotate(double angle) {
+		Double2 v;
+		v.x = x * cos(angle) - y * sin(angle);
+		v.y = x * sin(angle) + y * cos(angle);
+		return v;
+	}
 
 
 	Double2 operator*(const double a) { return Double2(x * a, y * a); }
 	Double2 operator+(const Double2 a) { return Double2(x + a.x, y + a.y); }
 	Double2 operator-(const Double2 a) { return Double2(x - a.x, y - a.y); }
-
+	bool operator==(const Double2 a) { 
+		printf("%f    %f     ==     %f     %f\n", x, y, a.x, a.y);
+		return (x == a.x && y == a.y); }
 };
 
 
@@ -84,8 +91,58 @@ struct Wall {
 	double len;
 	double angle;
 
-
+	void bottomrightFirst() {	// Ensures p1 is bottom right
+		if (p1.y > p2.y)
+			swap();
+		else if (p1.y == p2.y) {
+			if (p1.x < p2.x)
+				swap();
+		}
+	}
+	void swap() {
+		Double2 temp = p1;
+		p1 = p2;
+		p2 = temp;
+	}
+	Double2 getNormalDown() {
+		bottomrightFirst();
+		Double2 vector = p2 - p1;
+		return vector.rotate(PI / 2);
+	}
+	Double2 intersect(Wall wall) {	// Assumin both walls are infinite in length
+		double denominator = (p1.x - p2.x) * (wall.p1.y - wall.p2.y) - (p1.y - p2.y) * (wall.p1.x - wall.p2.x);
+		if (denominator == 0) {
+			std::cout << "Division by 0 in intersect";
+			exit(-1);
+		}
+		double x = ((p1.x * p2.y - p1.y * p2.x) * (wall.p1.x - wall.p2.x) - (p1.x - p2.x) * (wall.p1.x * wall.p2.y - wall.p1.y * wall.p2.x)) / denominator;
+		double y = ((p1.x * p2.y - p1.y * p2.x) * (wall.p1.y - wall.p2.y) - (p1.y - p2.y) * (wall.p1.x * wall.p2.y - wall.p1.y * wall.p2.x)) / denominator;
+		return Double2(x, y);
+	}
 };
+
+struct WallContainer {
+	WallContainer(){}
+	WallContainer(Wall wall): wall(wall) {}
+	Wall wall;
+	WallContainer* next = NULL;
+
+	void add(Wall wall) {
+		if (next == NULL)
+			next = new WallContainer(wall);
+		else
+			next->add(wall);
+	}
+	void deleteList() {
+		if (next != NULL) {
+			next->deleteList();
+		}
+		delete next;
+	}
+	
+};
+
+
 
 struct Player {
 	Player() { rotate(0); }
