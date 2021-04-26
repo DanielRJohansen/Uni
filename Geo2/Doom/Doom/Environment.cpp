@@ -3,16 +3,11 @@
 
 
 
-void Environment::drawAll() {
+void Environment::drawAll(int n_walls) {
     display.clearWalls();
-    display.drawWallsegment(&walls[0]);
-    display.drawWallsegment(&walls[1]);
-    display.drawWallsegment(&walls[2]);
-    display.drawWallsegment(&walls[3]);
-    display.drawWallsegment(&walls[4]);
-    display.drawWallsegment(&walls[6]);
-    display.drawWallsegment(&walls[8]);
-    display.drawWallsegment(&walls[9]);
+    for (int i = 0; i < n_walls; i++) {
+        display.drawWallsegment(&walls[i]);
+    }
     display.renderFront();
 }
 
@@ -108,9 +103,11 @@ void Environment::run() {
             continue;
         }
 
+        bsp.paint(&player, &display);
+
         handleMovement();
         handleRotation();
-        drawAll();
+        //drawAll(this->n_walls);
 
 
         //while (true) {}

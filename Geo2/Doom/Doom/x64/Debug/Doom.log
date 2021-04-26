@@ -1,3 +1,3 @@
 ﻿  BSP.cpp
-C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Types.h(191,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\Doom\Types.h(211,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Doom.vcxproj -> C:\Users\DRDJ\git_repo\Uni\Geo2\Doom\x64\Debug\Doom.exe

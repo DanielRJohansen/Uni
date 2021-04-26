@@ -48,7 +48,7 @@ void Display::renderTopView() {
 		Wall wall = all_walls[i];
 		sf::RectangleShape line(sf::Vector2f(wall.len, 3));
 		line.setFillColor(sf::Color(250, 120, 50));
-		if (i == 1)
+		if (i == 0)
 			line.setFillColor(sf::Color(50, 120, 250));
 		line.rotate(-wall.angle/(2*3.14)*360);
 		line.setPosition((int)wall.p1.x, (int)(window_size.y - wall.p1.y));
@@ -165,10 +165,13 @@ void Display::addSegment(Wall* wallsegment) {
 	Vec3d wall_point, intersect, projection;
 	double projection_scaling = center.x;
 
+	//printf("pre print\n");
+	//printf("Adding wall: %f  %f  %f  %f \n", wallsegment->p1.x, wallsegment->p1.y, wallsegment->p2.x, wallsegment->p2.y );
+
 	// Handle some special cases
 	Vec3d w1, w2;
 	handleWallBehindPlayer(&w1, &w2, wallsegment);
-
+	//
 
 
 
@@ -180,7 +183,8 @@ void Display::addSegment(Wall* wallsegment) {
 
 
 	if (bottomleft.x == bottomright.x) {	// Case when wall projected becomes a single line.
-		printf("VERY BAD\n");
+		//printf("VERY BAD   %f    %f\n", bottomleft.x, bottomright.x);
+		//printf("Wall: %f  %f  %f  %f\n", w1.x, w1.y, w2.x, w2.y);
 		return;
 	}
 

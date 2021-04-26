@@ -26,7 +26,9 @@ public:
 		Node() {};
 		Node(int max_n_walls) { walls = new Wall[max_n_walls]; };
 		void partition();
+		void painters(Player* player, Display* display);
 		void determineWall(Wall* wall);
+
 		void assign(Wall* wall) {
 			walls[node_walls++] = *wall;
 		}
@@ -44,7 +46,10 @@ public:
 		
 
 	private:
-		
+		void paint(Display* display);
+
+
+
 		// Filled by parents before partitioning.
 		Wall* walls;
 		int node_walls = 0;

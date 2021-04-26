@@ -5,7 +5,7 @@
 using namespace std;
 
 
-const double PI = 3.14;
+const double PI = 3.14159;
 
 
 
@@ -28,8 +28,12 @@ struct Double2 {
 	double len() {
 		return sqrt(x * x + y * y);
 	}
-	double dot(Double2 vecb) {
-		return this->len() * cos(vecb.angle(*this));
+	double dot(Double2 vec) {
+		return x*vec.x + y * vec.y;
+	}
+	Double2 normalize() {
+		double l = this->len();
+		return Double2(x / l, y / l);
 	}
 	Double2 rotate(double angle) {
 		Double2 v;
@@ -43,7 +47,7 @@ struct Double2 {
 	Double2 operator+(const Double2 a) { return Double2(x + a.x, y + a.y); }
 	Double2 operator-(const Double2 a) { return Double2(x - a.x, y - a.y); }
 	bool operator==(const Double2 a) { 
-		printf("%f    %f     ==     %f     %f\n", x, y, a.x, a.y);
+		//printf("%f    %f     ==     %f     %f\n", x, y, a.x, a.y);
 		return (x == a.x && y == a.y); }
 };
 
@@ -92,10 +96,10 @@ struct Wall {
 	double angle;
 
 	void bottomrightFirst() {	// Ensures p1 is bottom right
-		if (p1.y > p2.y)
+		if (p1.x < p2.x)
 			swap();
-		else if (p1.y == p2.y) {
-			if (p1.x < p2.x)
+		else if (p1.x == p2.x) {
+			if (p1.y > p2.y)
 				swap();
 		}
 	}
@@ -107,9 +111,11 @@ struct Wall {
 	Double2 getNormalDown() {
 		bottomrightFirst();
 		Double2 vector = p2 - p1;
-		return vector.rotate(PI / 2);
+		return vector.rotate(PI / 2).normalize();
 	}
 	Double2 intersect(Wall wall) {	// Assumin both walls are infinite in length
+		printf("Intersecting: %f  %f  %f  %f\n", p1.x, p1.y, p2.x, p2.y);
+		printf("Intersecting: %f  %f  %f  %f\n", wall.p1.x, wall.p1.y, wall.p2.x, wall.p2.y);
 		double denominator = (p1.x - p2.x) * (wall.p1.y - wall.p2.y) - (p1.y - p2.y) * (wall.p1.x - wall.p2.x);
 		if (denominator == 0) {
 			std::cout << "Division by 0 in intersect";
@@ -123,8 +129,9 @@ struct Wall {
 
 struct WallContainer {
 	WallContainer(){}
-	WallContainer(Wall wall): wall(wall) {}
+	WallContainer(Wall wall) : wall(wall) { n_walls = 1; }
 	Wall wall;
+	int n_walls = 0;
 	WallContainer* next = NULL;
 
 	void add(Wall wall) {
@@ -132,6 +139,7 @@ struct WallContainer {
 			next = new WallContainer(wall);
 		else
 			next->add(wall);
+		n_walls++;
 	}
 	void deleteList() {
 		if (next != NULL) {
@@ -139,7 +147,17 @@ struct WallContainer {
 		}
 		delete next;
 	}
-	
+	Wall* getWalls() {
+		Wall* walls = new Wall[n_walls];
+		this->get(walls, 0);
+		return walls;
+	}
+private:
+	void get(Wall* walls, int i) {
+		walls[i] = this->wall;
+		if (next != NULL)
+			next->get(walls, i + 1);
+	}
 };
 
 
@@ -156,10 +174,11 @@ struct Player {
 
 
 	double view_z= 50;
-	Vec3d pos = Vec3d(400, 200, view_z);
+	Vec3d pos = Vec3d(10, 10, view_z);
+	Double2 pos_2d = Double2(pos.x, pos.y);
 	double focal_len = 1.5;
 	
-	double angle = 3* 3.14/4;
+	double angle = 1.2 * 3.14/4;
 	Vec3d focal_normal = Vec3d(focal_len, 0, 0);
 	Vec3d focal_origo;
 
@@ -168,6 +187,7 @@ struct Player {
 			return;
 		pos = pos + focal_normal.rotate(direction) * (1 / focal_len) * dt;
 		focal_origo = pos + focal_normal;
+		pos_2d = Double2(pos.x, pos.y);
 	}
 };
 
@@ -239,42 +259,3 @@ private:
 };
 
 
-
-/*
-class Scanline {
-
-	enum AVAILABILITY { FREE, TAKEN };
-	struct ScanlineSegment {
-		ScanlineSegment() {}
-		ScanlineSegment(int start, int end, AVAILABILITY avail) : start(start), end(end), avail(avail) {}
-
-		void mergeChild() {
-			ScanlineSegment* tmp = next->next;
-			end = next->end;
-			delete next;
-			next = tmp;
-		}
-
-		int start, end;
-		AVAILABILITY avail = FREE;
-		ScanlineSegment* next = NULL;
-	};
-
-
-	Scanline(int width) : width(width) { slsegment = ScanlineSegment(0, width, FREE); }
-	Double2* request(Double2 from_to) {
-		Double2* split_segments = new Double2(width);	// Make large for worst case
-		int n_segments = 1;
-
-
-		return split_segments;
-	}
-
-	int width;
-	ScanlineSegment slsegment;
-
-	
-
-	
-};
-*/

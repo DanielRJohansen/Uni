@@ -36,7 +36,7 @@ private:
 	bool movement[4];	// wasd
 	double angles[4] = { 0, PI / 2, PI, -PI / 2 };
 
-	void drawAll();
+	void drawAll(int n_walls);
 	void handleMovement();
 	void handleRotation();
 	void handleKeypress(sf::Event* event);

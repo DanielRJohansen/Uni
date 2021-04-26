@@ -23,7 +23,8 @@ Wall* parseInput(std::string path, int* n_walls) {
 			std::stringstream ss;
 			if (line[0] == '#' || line[0] == '\n' || line[0] == ' ')	// Skip comments
 				continue;
-			//cout << line << endl;
+			if (line[0] == '*')
+				break;
 			ss << line;
 			for (int i = 0; i < 4; i++) {
 				ss >> temp;
