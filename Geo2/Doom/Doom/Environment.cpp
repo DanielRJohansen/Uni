@@ -71,7 +71,7 @@ void Environment::runningAverageFPS(sf::Time frame_time) {
     if (cnt == nums) {
         double avg_mil_per_frame = framesum / (double) nums;
         double fps = 1000. / avg_mil_per_frame;
-        printf("\rPossible framerate if unlimited: %d", (int)fps);
+        printf("\rPossible framerate if unlimited: %d FPS", (int)fps);
         cnt = 0;
         framesum = 0;
     }

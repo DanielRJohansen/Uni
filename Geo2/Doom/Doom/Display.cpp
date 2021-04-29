@@ -23,12 +23,14 @@ Display::Display(Double2 window_size, Wall* walls, int n_walls, Player* player) 
 	top_view->setPosition(sf::Vector2i(0, 300));
 	front_view->setPosition(sf::Vector2i(width, 300));
 
+	/*
 	image = new sf::Image();															// Background color
 	image->create(width, height, sf::Color(0xEB, 0xEB, 0xEB));
 	texture.loadFromImage(*image);
 	sprite.setTexture(texture, true);
 	front_view->draw(sprite);
 	top_view->draw(sprite);
+	*/
 }
 
 

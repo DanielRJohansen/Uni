@@ -57,7 +57,7 @@ void runGame() {
 	printf("Use default map? (y/n)\n");
 	cin >> use_default;
 	if (use_default == 'y')
-		path = "../Maps/16_walls.txt";
+		path = "../Maps/default.txt";
 	else {
 		printf("Please type map path \n");
 		cin >> path;
@@ -75,7 +75,7 @@ void swap(double* a, double* b) {
 	*b = temp;
 }
 void generateRepetetiveMap() {
-	std::string path = "../Maps/16_walls.txt";
+	std::string path = "../Maps/default.txt";
 	int n_walls;
 	Wall* walls = parseInput(path, &n_walls);
 	int side_len = 2000;
@@ -161,7 +161,7 @@ void runFragmentationStatistics() {
 	printf("Walls:\n");
 	printf("[");
 	for (int i = 1; i <= stop_at; i*= 2)
-		printf("%d ", 16 * (i ) * (i));
+		printf("%d ", 21 * (i ) * (i));
 	printf("];\n");
 	
 	printf("Average fragments:\n");

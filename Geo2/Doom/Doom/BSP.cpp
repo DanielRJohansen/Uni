@@ -5,6 +5,7 @@
 
 
 BSP::BSP(Wall* walls, int n_walls) {
+	fragments = n_walls;
 	root = new Node(n_walls, &fragments);
 	shuffleWalls(walls, n_walls);
 	for (int i = 0; i < n_walls; i++) {
@@ -134,6 +135,7 @@ void BSP::Node::determineWall(Wall* wall) {
 	bool p1_above = dotp_p1 <= 0;
 	bool p2_above = dotp_p2 <= 0;
 
+
 	if (p1_below && p2_below) {
 		down->assign(wall);
 	}
@@ -155,7 +157,7 @@ void BSP::Node::determineWall(Wall* wall) {
 		up->assign(&top_wall);
 		down->assign(&bottom_wall);
 
-		*fragments = *fragments + 1;
+		*fragments = *fragments + 1;	// One extra
 	}
 }
 
