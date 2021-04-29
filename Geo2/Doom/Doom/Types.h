@@ -5,7 +5,7 @@
 using namespace std;
 
 
-const double PI = 3.14159;
+const double PI = 3.14159265;
 
 
 
@@ -33,6 +33,16 @@ struct Double2 {
 	}
 	Double2 normalize() {
 		double l = this->len();
+		if (l == 0) {
+			printf("wtf %f  %f\n", x, y);
+			exit(-1);
+		}			
+		return Double2(x / l, y / l);
+	}
+	Double2 normalize(bool ignore_if_zero) {
+		double l = this->len();
+		if (l == 0) 
+			return Double2(0, 0);		
 		return Double2(x / l, y / l);
 	}
 	Double2 rotate(double angle) {
@@ -105,6 +115,7 @@ struct Wall {
 	}
 	void swap() {
 		Double2 temp = p1;
+
 		p1 = p2;
 		p2 = temp;
 	}
@@ -114,8 +125,6 @@ struct Wall {
 		return vector.rotate(PI / 2).normalize();
 	}
 	Double2 intersect(Wall wall) {	// Assumin both walls are infinite in length
-		printf("Intersecting: %f  %f  %f  %f\n", p1.x, p1.y, p2.x, p2.y);
-		printf("Intersecting: %f  %f  %f  %f\n", wall.p1.x, wall.p1.y, wall.p2.x, wall.p2.y);
 		double denominator = (p1.x - p2.x) * (wall.p1.y - wall.p2.y) - (p1.y - p2.y) * (wall.p1.x - wall.p2.x);
 		if (denominator == 0) {
 			std::cout << "Division by 0 in intersect";

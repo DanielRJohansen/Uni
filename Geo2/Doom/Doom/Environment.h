@@ -26,12 +26,15 @@ private:
 	Wall* walls;
 	int n_walls;
 
-	double dt = 0.3;
-
+	double dt = 5;
+	int fps_limit = 60;
 	bool pause = 0;
 
 
-
+	void runningAverageFPS(sf::Time frame_time);
+	const int nums = 20;
+	int framesum = 0;
+	int cnt = 0;
 
 	bool movement[4];	// wasd
 	double angles[4] = { 0, PI / 2, PI, -PI / 2 };

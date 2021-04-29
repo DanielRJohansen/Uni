@@ -11,10 +11,9 @@ public:
 
 	void paint(Player* player, Display* display);
 
-
 	int fragments = 0;
-
-
+private:
+	void shuffleWalls(Wall* walls, int n_walls);
 
 
 
@@ -24,7 +23,7 @@ public:
 	class Node {
 	public:
 		Node() {};
-		Node(int max_n_walls) { walls = new Wall[max_n_walls]; };
+		Node(int max_n_walls, int* fragments_ptr) { walls = new Wall[max_n_walls]; fragments = fragments_ptr; };
 		void partition();
 		void painters(Player* player, Display* display);
 		void determineWall(Wall* wall);
@@ -47,7 +46,7 @@ public:
 
 	private:
 		void paint(Display* display);
-
+		int* fragments;
 
 
 		// Filled by parents before partitioning.

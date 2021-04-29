@@ -115,10 +115,8 @@ Vec3d intersectPoint(Vec3d rayVector, Vec3d rayPoint, Vec3d planeNormal, Vec3d p
 
 Double2 Display::projectOnFocalPlane(Vec3d point) {
 	Vec3d wall_point, intersect, projection;
-	//wall_point = Vec3d(point.x, point.y, 0);
 	intersect = intersectPoint(player->pos - point, point, player->focal_normal, player->focal_origo);
 	projection = (intersect - player->focal_origo).rotate(3.14 - player->angle);
-	//printf("Projection: %f     %f     %f \n", projection.x, projection.y, projection.z);
 	return Double2(center.x + projection.y * center.x, center.y + projection.z * center.x);
 }
 
@@ -165,13 +163,10 @@ void Display::addSegment(Wall* wallsegment) {
 	Vec3d wall_point, intersect, projection;
 	double projection_scaling = center.x;
 
-	//printf("pre print\n");
-	//printf("Adding wall: %f  %f  %f  %f \n", wallsegment->p1.x, wallsegment->p1.y, wallsegment->p2.x, wallsegment->p2.y );
 
 	// Handle some special cases
 	Vec3d w1, w2;
 	handleWallBehindPlayer(&w1, &w2, wallsegment);
-	//
 
 
 
@@ -183,8 +178,6 @@ void Display::addSegment(Wall* wallsegment) {
 
 
 	if (bottomleft.x == bottomright.x) {	// Case when wall projected becomes a single line.
-		//printf("VERY BAD   %f    %f\n", bottomleft.x, bottomright.x);
-		//printf("Wall: %f  %f  %f  %f\n", w1.x, w1.y, w2.x, w2.y);
 		return;
 	}
 
@@ -219,7 +212,6 @@ void Display::addSegment(Wall* wallsegment) {
 	for (int i = 0; i < n_segments; i++) {
 		sf::VertexArray segment(sf::Quads, 4);
 		Double2 fromto = segmentlist[i];
-		//printf("Permission: %f  ->  %f\n", fromto.x, fromto.y);
 		
 		double relative_start = fromto.x - bottomleft.x;
 		double relative_end = fromto.y - bottomleft.x;
@@ -238,8 +230,8 @@ void Display::addSegment(Wall* wallsegment) {
 		for (int i = 0; i < 4; i++)
 			segment[i].color = sf::Color(250, 50 * i, 50, 255);
 		visibleSegments[n_visible++] = segment;
-
 	}
+	delete segmentlist;
 }
 
 void Display::renderFront() {

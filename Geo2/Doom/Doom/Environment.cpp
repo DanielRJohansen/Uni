@@ -65,10 +65,23 @@ void Environment::handleRotation() {
 
 }
 
-
+void Environment::runningAverageFPS(sf::Time frame_time) {
+    framesum += frame_time.asMilliseconds();
+    cnt++;
+    if (cnt == nums) {
+        double avg_mil_per_frame = framesum / (double) nums;
+        double fps = 1000. / avg_mil_per_frame;
+        printf("\rPossible framerate if unlimited: %d", (int)fps);
+        cnt = 0;
+        framesum = 0;
+    }
+}
 
 void Environment::run() {
+    sf::Clock clock;
+
 	while (true) {
+        clock.restart();
 
 
         sf::Event event;
@@ -107,6 +120,13 @@ void Environment::run() {
 
         handleMovement();
         handleRotation();
+
+
+        sf::Time elapsed_time = clock.getElapsedTime();
+        runningAverageFPS(elapsed_time);
+        while (elapsed_time.asMilliseconds() < 1000/fps_limit) { elapsed_time = clock.getElapsedTime(); }   // wait
+
+
         //drawAll(this->n_walls);
 
 
